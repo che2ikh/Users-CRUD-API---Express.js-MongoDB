@@ -1,6 +1,8 @@
 const express = require('express');
 const router = express.Router();
 
+const multer=require("multer");
+const upload=multer();
 const {
   getAllUsers,
   getUser,
@@ -12,7 +14,7 @@ const {
 
 router.route('/')
   .get(getAllUsers)
-  .post(createUser);
+  .post(upload.none(),createUser);
 
     router.route('/all')
   .delete(deleteAll);

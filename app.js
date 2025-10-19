@@ -11,7 +11,7 @@ app.use(cors());
 
 // Middleware
 app.use(express.json());
-
+app.use(express.urlencoded({extended:false}));
 // Routes
 const userRoutes = require('./routes/userRoutes');
 app.use('/api/v1/users', userRoutes);
