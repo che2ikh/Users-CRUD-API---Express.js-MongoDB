@@ -1,5 +1,13 @@
 const express = require('express');
+const db = require("./config/db"); 
+const cors = require('cors');
+
+
+db();
+
 const app = express();
+
+app.use(cors());
 
 // Middleware
 app.use(express.json());
@@ -14,7 +22,8 @@ app.get('/', (req, res) => {
 });
 
 // Start server
-const PORT = 3000;
+const PORT =5000;
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
 });
+

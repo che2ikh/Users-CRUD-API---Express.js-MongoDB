@@ -1,49 +1,49 @@
-const fs = require('fs').promises;
-const path = require('path');
+const {User} = require('../models/userModel');
 
-const filePath = path.join(__dirname, '../data_dev/users.json');
-
+// Get all users
 const getUsers = async () => {
-  const data = await fs.readFile(filePath, 'utf8');
-  return JSON.parse(data);
-
+  return await User.find();
 };
 
-const getUserById = async (id) => {
-  const users = await getUsers();
-  return users.find(u => u.id === id);
+// Get user by ID
+const getUserByEmail = async (email) => {
+  return await User.findOne({email});
 };
 
-const createUser = async (user) => {
-  const users = await getUsers();
-  const newUser = { id: Date.now(), ...user };
-  users.push(newUser);
-  await fs.writeFile(filePath, JSON.stringify(users, null, 2));
-  return newUser;
+// Check if email exists
+const existUserByEmail = async (email) => {
+  const user = await User.findOne({ email });
+  return !!user;
 };
 
-const updateUser = async (id, updatedData) => {
-  const users = await getUsers();
-  const index = users.findIndex(u => u.id === id);
-  if (index === -1) return null;
-  users[index] = { ...users[index], ...updatedData };
-  await fs.writeFile(filePath, JSON.stringify(users, null, 2));
-  return users[index];
+// Create user
+const createUser = async (userData) => {
+  const newUser = new User(userData);
+  return await newUser.save();
 };
 
-const deleteUser = async (id) => {
-  const users = await getUsers();
-  const index = users.findIndex(u => u.id === id);
-  if (index === -1) return null;
-  const deleted = users.splice(index, 1);
-  await fs.writeFile(filePath, JSON.stringify(users, null, 2));
-  return deleted[0];
+// Update user
+const updateUser = async (email, updatedData) => {
+  return await User.findOneAndUpdate({email}, updatedData, { new: true });
+};
+
+// Delete user
+const deleteUser = async (email) => {
+  return await User.deleteOne({email});
+};
+
+const clear = async () => {
+  const users = await User.find();
+console.log(users.length);
+  return await User.deleteMany();
 };
 
 module.exports = {
-     getUsers,
-      getUserById,
-       createUser,
-        updateUser,
-         deleteUser
-         };
+  getUsers,
+  getUserByEmail,
+  existUserByEmail,
+  createUser,
+  updateUser,
+  deleteUser,
+  clear
+};
