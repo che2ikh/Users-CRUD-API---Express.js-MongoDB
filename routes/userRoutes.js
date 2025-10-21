@@ -1,5 +1,6 @@
 const express = require('express');
 const router = express.Router();
+const verifyToken = require("../middleware/userMiddleweare");
 
 const multer=require("multer");
 const upload=multer();
@@ -9,20 +10,24 @@ const {
   createUser,
   updateUser,
   deleteUser,
-  deleteAll
+  deleteAll,
+  loginUser
 } = require('../controllers/userControllers');
 
+router.route('/login')
+.post(loginUser);
+
 router.route('/')
-  .get(getAllUsers)
+  .get(verifyToken,getAllUsers)
   .post(upload.none(),createUser);
 
     router.route('/all')
-  .delete(deleteAll);
+  .delete(verifyToken,deleteAll);
   
 router.route('/:email')
-  .get(getUser)
-  .put(updateUser)
-  .delete(deleteUser);
+  .get(verifyToken,getUser)
+  .put(verifyToken,updateUser)
+  .delete(verifyToken,deleteUser);
 
 
 

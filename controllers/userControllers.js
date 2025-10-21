@@ -5,9 +5,26 @@ const {
   createUser,
   updateUser,
   deleteUser,
-  clear
+  clear,
+  authenticateUser
 } = require('../services/userServices');
 
+const loginUser = async(req, res) =>{
+  try {
+    const { username, password } = req.body;
+
+    const token = await authenticateUser(username, password);
+
+    if (!token) {
+      return res.status(401).json({ error: 'Authentication failed' });
+    }
+
+    res.status(200).json({ token });
+  } catch (error) {
+    console.error('Login error:', error);
+    res.status(500).json({ error: 'Login failed' });
+  }
+}
 // GET all users
 const getAllUsers = async (req, res) => {
   try {
@@ -87,5 +104,6 @@ module.exports = {
   createUser: createUserHandler,
   updateUser: updateUserHandler,
   deleteUser: deleteUserHandler,
-  deleteAll
+  deleteAll,
+  loginUser
 };
